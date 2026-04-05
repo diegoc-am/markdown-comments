@@ -1,24 +1,56 @@
-# README
+# Markdown Comments
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+Rails app for threaded comments on markdown files, authenticated with GitHub OAuth.
 
-Things you may want to cover:
+## Quick Start
 
-* Ruby version
+1. Install dependencies:
 
-* System dependencies
+   ```bash
+   bundle install
+   ```
 
-* Configuration
+2. Copy sample env vars and set GitHub OAuth credentials:
 
-* Database creation
+   ```bash
+   cp .env.example .env
+   # then update GITHUB_CLIENT_ID and GITHUB_CLIENT_SECRET
+   ```
 
-* Database initialization
+3. Prepare DB and run server:
 
-* How to run the test suite
+   ```bash
+   bin/rails db:prepare
+   bin/dev
+   ```
 
-* Services (job queues, cache servers, search engines, etc.)
+4. Open `http://localhost:3000` and sign in via `/login`.
 
-* Deployment instructions
+If OAuth env vars are missing, the app now shows an in-app warning banner and keeps GitHub sign-in disabled.
 
-* ...
+## Key Routes
+
+- `GET /` dashboard UI
+- `GET /up` health check
+- `GET /login` GitHub OAuth entrypoint
+- `GET /auth/github/callback` OAuth callback
+- `DELETE /logout` session logout
+- `GET /api/v1/comments` list comments (supports `?path=...`)
+- `POST /api/v1/comments` create comment
+- `PATCH /api/v1/comments/:id` update comment or status
+- `DELETE /api/v1/comments/:id` delete own comment
+
+All comment API routes require an authenticated session.
+
+## Documentation
+
+- Contributor setup and production checklist: `docs/contributor-setup.md`
+- Onboarding and runtime operations: `docs/onboarding-and-operations.md`
+- GitHub OAuth plug-and-play guide: `docs/github-oauth.md`
+
+## Quality Checks
+
+```bash
+bin/rails test
+bin/ci
+```

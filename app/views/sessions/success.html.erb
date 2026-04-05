@@ -1,0 +1,23 @@
+<% content_for :title, "Signed In" %>
+
+<main class="auth-success-shell">
+  <section class="auth-success-card z-depth-2">
+    <div class="preloader-wrapper big active" aria-hidden="true">
+      <div class="spinner-layer spinner-blue-only">
+        <div class="circle-clipper left"><div class="circle"></div></div>
+        <div class="gap-patch"><div class="circle"></div></div>
+        <div class="circle-clipper right"><div class="circle"></div></div>
+      </div>
+    </div>
+
+    <h1>Welcome, @<%= @github_login %></h1>
+    <p>Authentication succeeded. Taking you to your comments workspace...</p>
+    <p class="manual-link"><a href="/">Continue now</a></p>
+  </section>
+</main>
+
+<script>
+  setTimeout(function() {
+    window.location.assign("/")
+  }, 1200)
+</script>

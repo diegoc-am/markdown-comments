@@ -1,0 +1,130 @@
+<% content_for :title, "Markdown Comments" %>
+
+<div class="page-shell">
+  <nav class="z-depth-0">
+    <div class="nav-wrapper container">
+      <a href="/" class="brand-logo">Markdown Comments</a>
+      <ul class="right">
+        <% if user_signed_in? %>
+          <li class="nav-user">
+            <span>@<%= current_user.github_login %></span>
+          </li>
+          <li>
+            <%= button_to "Sign out", "/logout", method: :delete, class: "btn-flat nav-action" %>
+          </li>
+        <% elsif github_oauth_configured? %>
+          <li>
+            <a class="btn amber darken-2" href="/login">Sign in with GitHub</a>
+          </li>
+        <% else %>
+          <li>
+            <span class="btn disabled nav-action-disabled" aria-disabled="true">GitHub sign in unavailable</span>
+          </li>
+        <% end %>
+      </ul>
+    </div>
+  </nav>
+
+  <main class="container section">
+    <% if notice.present? %>
+      <div class="card-panel green lighten-5 green-text text-darken-3"><%= notice %></div>
+    <% end %>
+
+    <% if alert.present? %>
+      <div class="card-panel red lighten-5 red-text text-darken-3"><%= alert %></div>
+    <% end %>
+
+    <% unless github_oauth_configured? %>
+      <div class="card-panel amber lighten-4 amber-text text-darken-4 oauth-warning-banner">
+        <strong>GitHub OAuth is not configured.</strong>
+        Add
+        <% github_oauth_missing_vars.each_with_index do |env_var, index| %>
+          <code><%= env_var %></code><%= "," unless index == github_oauth_missing_vars.length - 1 %>
+        <% end %>
+        to your environment before trying to sign in.
+      </div>
+    <% end %>
+
+    <section class="hero">
+      <div>
+        <h1>Comment directly on markdown files</h1>
+        <p>Track feedback by file path, threaded replies, and resolution state.</p>
+      </div>
+    </section>
+
+    <% if user_signed_in? %>
+      <section
+        class="section"
+        data-controller="comments-ui"
+        data-comments-ui-index-url-value="/api/v1/comments"
+        data-comments-ui-create-url-value="/api/v1/comments"
+        data-comments-ui-update-url-template-value="/api/v1/comments/:id"
+        data-comments-ui-delete-url-template-value="/api/v1/comments/:id"
+        data-comments-ui-current-user-id-value="<%= current_user.id %>"
+      >
+        <div class="row">
+          <div class="col s12 l5">
+            <div class="card z-depth-1 form-card">
+              <div class="card-content">
+                <span class="card-title">New Comment</span>
+                <form data-action="submit->comments-ui#createComment">
+                  <div class="input-field">
+                    <input id="path" name="path" type="text" required value="README.md">
+                    <label for="path" class="active">Markdown Path</label>
+                  </div>
+
+                  <div class="input-field">
+                    <textarea id="body" name="body" class="materialize-textarea" required></textarea>
+                    <label for="body">Comment</label>
+                  </div>
+
+                  <div class="row compact-row">
+                    <div class="input-field col s6">
+                      <input id="line_start" name="line_start" type="number" min="1">
+                      <label for="line_start">Line start</label>
+                    </div>
+                    <div class="input-field col s6">
+                      <input id="line_end" name="line_end" type="number" min="1">
+                      <label for="line_end">Line end</label>
+                    </div>
+                  </div>
+
+                  <button type="submit" class="btn blue darken-2">Save Comment</button>
+                </form>
+              </div>
+            </div>
+          </div>
+
+          <div class="col s12 l7">
+            <div class="card z-depth-1 list-card">
+              <div class="card-content">
+                <div class="row compact-row">
+                  <div class="input-field col s12 m8">
+                    <input id="filter_path" name="filter_path" type="text" value="README.md" data-comments-ui-target="pathFilter">
+                    <label for="filter_path" class="active">Filter by path</label>
+                  </div>
+                  <div class="col s12 m4 filter-action">
+                    <button class="btn-flat teal-text text-darken-3" data-action="click->comments-ui#loadComments" type="button">Refresh</button>
+                  </div>
+                </div>
+
+                <span class="card-title">Stored Comments</span>
+                <div data-comments-ui-target="list" data-action="click->comments-ui#onListClick submit->comments-ui#onListSubmit"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    <% else %>
+      <section class="section">
+        <div class="card-panel blue lighten-5 blue-text text-darken-4">
+          <% if github_oauth_configured? %>
+            Sign in with GitHub to start saving and managing comments.
+          <% else %>
+            Configure GitHub OAuth first, then refresh this page to enable sign in.
+          <% end %>
+        </div>
+      </section>
+    <% end %>
+  </main>
+</div>

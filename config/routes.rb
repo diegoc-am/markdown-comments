@@ -9,6 +9,17 @@ Rails.application.routes.draw do
   # get "manifest" => "rails/pwa#manifest", as: :pwa_manifest
   # get "service-worker" => "rails/pwa#service_worker", as: :pwa_service_worker
 
-  # Defines the root path route ("/")
-  # root "posts#index"
+  root "dashboard#index"
+
+  get "/login", to: "sessions#new"
+  get "/auth/github/callback", to: "sessions#create"
+  get "/auth/success", to: "sessions#success"
+  get "/auth/failure", to: "sessions#failure"
+  delete "/logout", to: "sessions#destroy"
+
+  namespace :api do
+    namespace :v1 do
+      resources :comments, only: %i[index create update destroy]
+    end
+  end
 end

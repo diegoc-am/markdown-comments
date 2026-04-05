@@ -24,6 +24,15 @@ FileUtils.chdir APP_ROOT do
   system! "bin/rails db:prepare"
   system! "bin/rails db:reset" if ARGV.include?("--reset")
 
+  required_oauth_vars = %w[GITHUB_CLIENT_ID GITHUB_CLIENT_SECRET]
+  missing_oauth_vars = required_oauth_vars.select { |env_var| ENV[env_var].to_s.strip.empty? }
+
+  if missing_oauth_vars.any?
+    puts "\n== OAuth configuration check =="
+    puts "Missing: #{missing_oauth_vars.join(", ")}"
+    puts "Sign in with GitHub will stay disabled until these variables are set."
+  end
+
   puts "\n== Removing old logs and tempfiles =="
   system! "bin/rails log:clear tmp:clear"
 
