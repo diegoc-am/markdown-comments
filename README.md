@@ -20,6 +20,7 @@ Rails app for threaded comments on markdown files, authenticated with GitHub OAu
 3. Prepare DB and run server:
 
    ```bash
+   docker compose up -d db redis
    bin/rails db:prepare
    bin/dev
    ```
@@ -27,6 +28,8 @@ Rails app for threaded comments on markdown files, authenticated with GitHub OAu
 4. Open `http://localhost:3000` and sign in via `/login`.
 
 If OAuth env vars are missing, the app now shows an in-app warning banner and keeps GitHub sign-in disabled.
+
+To comment on private repositories, the OAuth app must request `repo` scope. If you changed scopes after signing in, sign out and sign in again.
 
 ## Key Routes
 

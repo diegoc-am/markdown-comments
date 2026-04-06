@@ -10,8 +10,10 @@ Rails.application.config.x.github_oauth_configured = missing_github_oauth_vars.e
 Rails.application.config.x.github_oauth_missing_vars = missing_github_oauth_vars
 
 if missing_github_oauth_vars.empty?
+  github_scope = ENV.fetch("GITHUB_OAUTH_SCOPE", "read:user,user:email,repo")
+
   Rails.application.config.middleware.use OmniAuth::Builder do
-    provider :github, github_client_id, github_client_secret, scope: "read:user,user:email"
+    provider :github, github_client_id, github_client_secret, scope: github_scope
   end
 else
   message = "GitHub OAuth is disabled. Missing: #{missing_github_oauth_vars.join(", ")}."

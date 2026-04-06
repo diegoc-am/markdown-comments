@@ -23,4 +23,19 @@ class Comment < ApplicationRecord
       parent: parent
     )
   end
+
+  def self.create_for_source_url!(user:, source_url:, github_token:, body:, line_start: nil, line_end: nil, anchor: {}, parent: nil)
+    result = MarkdownDocument.track_from_source!(source_url, github_token: github_token)
+
+    create!(
+      user: user,
+      markdown_document: result[:document],
+      body: body,
+      line_start: line_start,
+      line_end: line_end,
+      anchor: anchor,
+      parent: parent,
+      source_commit_sha: result[:commit_sha]
+    )
+  end
 end

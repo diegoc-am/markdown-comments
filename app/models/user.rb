@@ -8,12 +8,15 @@ class User < ApplicationRecord
   def self.from_github_auth(auth)
     uid = auth.uid.to_s
     info = auth.info || {}
+    credentials = auth.credentials || {}
 
     user = find_or_initialize_by(github_uid: uid)
     user.github_login = info[:nickname] || info["nickname"] || info[:name] || info["name"] || "github-user-#{uid}"
     user.name = info[:name] || info["name"]
     user.email = info[:email] || info["email"]
     user.avatar_url = info[:image] || info["image"]
+    user.github_access_token = credentials[:token] || credentials["token"]
+    user.github_token_scopes = credentials[:scope] || credentials["scope"]
     user.save!
     user
   end
